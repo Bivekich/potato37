@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import { client } from './sanity/client';
-import { Product } from './types';
+import { Product, Category } from './types';
 import { ProductCard } from './components/ProductCard';
+import { getCategories } from './sanity/queries';
 
 async function getProducts(): Promise<Product[]> {
   return client.fetch(`*[_type == "product"] {
@@ -11,6 +12,11 @@ async function getProducts(): Promise<Product[]> {
     "slug": slug.current,
     price,
     description,
+    "category": category->{
+      _id,
+      name,
+      "slug": slug.current
+    },
     "images": images[] {
       _key,
       "url": asset->url,
@@ -21,6 +27,7 @@ async function getProducts(): Promise<Product[]> {
 
 export default async function Home() {
   const products = await getProducts();
+  const categories = await getCategories();
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -39,6 +46,25 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {categories.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold">Категории</h2>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-4">
+            {categories.map((category) => (
+              <a
+                key={category._id}
+                href={`/category/${category.slug}`}
+                className="px-4 py-2 bg-muted rounded-full hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+              >
+                {category.name}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section>
         <div className="flex items-center justify-between mb-8">

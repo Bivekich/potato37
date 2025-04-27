@@ -14,6 +14,7 @@ import { Product } from '@/app/types';
 import { useCart } from '@/app/hooks/use-cart';
 import { ShoppingCart, Eye } from 'lucide-react';
 import { toast } from 'sonner';
+import { Badge } from './ui/badge';
 
 interface ProductCardProps {
   product: Product;
@@ -47,7 +48,16 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
       <CardHeader className="p-4">
-        <CardTitle className="line-clamp-1">{product.name}</CardTitle>
+        <div className="flex justify-between items-start gap-2 mb-1">
+          <CardTitle className="line-clamp-1">{product.name}</CardTitle>
+          {product.category && (
+            <Link href={`/category/${product.category.slug}`}>
+              <Badge variant="outline" className="whitespace-nowrap">
+                {product.category.name}
+              </Badge>
+            </Link>
+          )}
+        </div>
         <p className="font-bold text-lg text-primary">{product.price} ₽</p>
       </CardHeader>
       <CardContent className="p-4 pt-0">

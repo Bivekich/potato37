@@ -17,6 +17,11 @@ async function getProduct(slug: string): Promise<Product | null> {
       "slug": slug.current,
       price,
       description,
+      "category": category->{
+        _id,
+        name,
+        "slug": slug.current
+      },
       "images": images[] {
         _key,
         "url": asset->url,

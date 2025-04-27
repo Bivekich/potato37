@@ -94,4 +94,48 @@ server {
     }
 }
 ```
+
+## Настройка Sanity для синхронизации данных с сайтом
+
+### Настройка вебхуков
+
+Для автоматической синхронизации данных с сайтом, нужно настроить вебхуки в Sanity:
+
+1. Открыть проект Sanity в админке [https://www.sanity.io/manage](https://www.sanity.io/manage)
+2. Перейти в раздел API -> Webhooks
+3. Нажать "Create webhook"
+4. Заполнить форму:
+
+   - Name: Revalidate Next.js Cache
+   - URL: https://YOUR_SITE_URL/api/sanity-webhook
+   - Dataset: production
+   - Trigger on: Create, Update, Delete
+   - Filter: Можно оставить пустым или указать конкретные типы документов, например: `_type in ["product", "category", "about", "contacts"]`
+   - Secret: Создать секретный ключ и сохранить его
+   - HTTP method: POST
+   - API version: v2021-03-25
+   - Include document: Включить
+
+5. Добавить секретный ключ в .env файл:
+
+```
+SANITY_WEBHOOK_SECRET=ваш_секретный_ключ
+```
+
+### Ручная инвалидация кэша
+
+Если нужно вручную обновить кэш сайта, можно использовать API:
+
+```bash
+curl -X POST https://YOUR_SITE_URL/api/debug/revalidate \
+  -H "Content-Type: application/json" \
+  -d '{"path":"/", "secret":"REVALIDATE_SECRET"}'
+```
+
+Добавьте в .env файл:
+
+```
+REVALIDATE_SECRET=ваш_секретный_ключ_для_ручного_обновления
+```
+
 # potato37

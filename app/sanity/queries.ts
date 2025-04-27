@@ -1,5 +1,13 @@
 import { client } from './client';
-import { About, Contacts } from '../types';
+import { About, Contacts, Category } from '../types';
+
+export async function getCategories(): Promise<Category[]> {
+  return client.fetch(`*[_type == "category"] | order(order asc) {
+    _id,
+    name,
+    "slug": slug.current
+  }`);
+}
 
 export async function getAboutPageData(): Promise<About> {
   const data = await client.fetch(`*[_type == "about"][0] {

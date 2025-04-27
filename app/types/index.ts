@@ -1,5 +1,11 @@
 import { PortableTextBlock } from '@portabletext/types';
 
+export type Category = {
+  _id: string;
+  name: string;
+  slug: string;
+};
+
 export type ProductImage = {
   _key: string;
   url: string;
@@ -13,6 +19,7 @@ export type Product = {
   slug: string;
   price: number;
   description: string;
+  category: Category;
   images: ProductImage[];
 };
 
