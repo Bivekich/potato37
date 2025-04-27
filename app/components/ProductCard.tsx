@@ -14,7 +14,7 @@ import { Product } from '@/app/types';
 import { useCart } from '@/app/hooks/use-cart';
 import { ShoppingCart, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import { Badge } from './ui/badge';
+import { Badge } from '@/components/ui/badge';
 
 interface ProductCardProps {
   product: Product;

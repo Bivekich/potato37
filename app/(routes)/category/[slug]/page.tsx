@@ -3,6 +3,7 @@ import { client } from '@/app/sanity/client';
 import { Product, Category } from '@/app/types';
 import { ProductCard } from '@/app/components/ProductCard';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -74,9 +75,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <section className="mb-8">
         <h1 className="text-3xl md:text-4xl font-bold mb-4">{category.name}</h1>
         <div className="flex gap-4 mb-8">
-          <a href="/" className="text-primary hover:underline">
+          <Link href="/" className="text-primary hover:underline">
             Вернуться на главную
-          </a>
+          </Link>
         </div>
       </section>
 

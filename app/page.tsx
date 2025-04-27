@@ -1,8 +1,9 @@
 import { Suspense } from 'react';
 import { client } from './sanity/client';
-import { Product, Category } from './types';
+import { Product } from './types';
 import { ProductCard } from './components/ProductCard';
 import { getCategories } from './sanity/queries';
+import Link from 'next/link';
 
 async function getProducts(): Promise<Product[]> {
   return client.fetch(`*[_type == "product"] {
@@ -54,13 +55,13 @@ export default async function Home() {
           </div>
           <div className="flex gap-4 overflow-x-auto pb-4">
             {categories.map((category) => (
-              <a
+              <Link
                 key={category._id}
                 href={`/category/${category.slug}`}
                 className="px-4 py-2 bg-muted rounded-full hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
               >
                 {category.name}
-              </a>
+              </Link>
             ))}
           </div>
         </section>
