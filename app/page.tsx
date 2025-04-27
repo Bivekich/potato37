@@ -5,6 +5,9 @@ import { ProductCard } from './components/ProductCard';
 import { getCategories } from './sanity/queries';
 import Link from 'next/link';
 
+// Добавляем конфигурацию для ISR
+export const revalidate = 3600; // Ревалидация каждый час
+
 async function getProducts(): Promise<Product[]> {
   return client.fetch(`*[_type == "product"] {
     _id,

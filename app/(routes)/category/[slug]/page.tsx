@@ -9,6 +9,9 @@ interface CategoryPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Добавляем конфигурацию для ISR
+export const revalidate = 3600; // Ревалидация каждый час
+
 async function getCategory(slug: string): Promise<Category | null> {
   return client.fetch(
     `*[_type == "category" && slug.current == $slug][0] {
@@ -42,6 +45,16 @@ async function getProductsByCategory(categoryId: string): Promise<Product[]> {
     }`,
     { categoryId }
   );
+}
+
+// Предварительно создаем пути для всех категорий
+export async function generateStaticParams() {
+  const categories = await client.fetch(
+    `*[_type == "category"] { "slug": slug.current }`
+  );
+  return categories.map((category: { slug: string }) => ({
+    slug: category.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: CategoryPageProps) {

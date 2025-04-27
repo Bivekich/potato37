@@ -8,6 +8,9 @@ interface ProductPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Добавляем конфигурацию для ISR
+export const revalidate = 3600; // Ревалидация каждый час
+
 async function getProduct(slug: string): Promise<Product | null> {
   return client.fetch(
     `*[_type == "product" && slug.current == $slug][0] {
@@ -30,6 +33,16 @@ async function getProduct(slug: string): Promise<Product | null> {
     }`,
     { slug }
   );
+}
+
+// Предварительно создаем пути для всех продуктов
+export async function generateStaticParams() {
+  const products = await client.fetch(
+    `*[_type == "product"] { "slug": slug.current }`
+  );
+  return products.map((product: { slug: string }) => ({
+    slug: product.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps) {

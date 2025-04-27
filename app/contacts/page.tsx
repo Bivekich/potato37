@@ -11,6 +11,9 @@ import {
   Globe,
 } from 'lucide-react';
 
+// Добавляем конфигурацию для ISR
+export const revalidate = 3600; // Ревалидация каждый час
+
 export const metadata = {
   title: 'Контакты | Картофель 37',
   description:

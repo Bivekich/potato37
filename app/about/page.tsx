@@ -3,6 +3,9 @@ import Image from 'next/image';
 import { getAboutPageData } from '../sanity/queries';
 import { PortableText } from '@portabletext/react';
 
+// Добавляем конфигурацию для ISR
+export const revalidate = 3600; // Ревалидация каждый час
+
 export const metadata = {
   title: 'О нас | Картофель 37',
   description:
@@ -104,8 +107,8 @@ async function AboutPageContent() {
                         {index === 0
                           ? 'Основатель и шеф-повар'
                           : index === 1
-                            ? 'Менеджер по работе с клиентами'
-                            : 'Шеф-повар'}
+                          ? 'Менеджер по работе с клиентами'
+                          : 'Шеф-повар'}
                       </p>
                     </div>
                   </div>
