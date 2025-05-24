@@ -5,11 +5,22 @@ FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --legacy-peer-deps
+# Установка зависимостей для sanity
+COPY sanity/package.json sanity/package-lock.json* ./sanity/
+WORKDIR /app/sanity
+RUN npm install --legacy-peer-deps
+# Установка зависимостей для sanity/potato37
+COPY sanity/potato37/package.json sanity/potato37/package-lock.json* ./potato37/
+WORKDIR /app/sanity/potato37
+RUN npm install --legacy-peer-deps
+WORKDIR /app
 
 # Сборка приложения
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/sanity/node_modules ./sanity/node_modules
+COPY --from=deps /app/sanity/potato37/node_modules ./sanity/potato37/node_modules
 COPY . .
 RUN npm run build
 
