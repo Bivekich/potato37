@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  potato37:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: potato37
+    restart: unless-stopped
+    env_file:
+      - stack.env
+    ports:
+      - "3011:3000"
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/debug/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - potato_network
+
+networks:
+  potato_network:
+    driver: bridge 
