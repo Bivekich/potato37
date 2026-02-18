@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOrderToTelegram } from "@/app/lib/telegram";
 import { sendOrderByEmail } from "@/app/lib/email";
 import { Order } from "@/app/types";
 
@@ -28,20 +27,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [telegramSuccess, emailSuccess] = await Promise.all([
-      sendOrderToTelegram(order),
-      sendOrderByEmail(order),
-    ]);
+    const success = await sendOrderByEmail(order);
 
-    if (!telegramSuccess) {
-      console.error("Не удалось отправить заказ в Telegram");
-    }
-
-    if (!emailSuccess) {
-      console.error("Не удалось отправить заказ на email");
-    }
-
-    if (!telegramSuccess && !emailSuccess) {
+    if (!success) {
       return NextResponse.json(
         { success: false, error: "Ошибка при отправке заказа" },
         { status: 500 },
