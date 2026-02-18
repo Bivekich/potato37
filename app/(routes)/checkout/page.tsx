@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useCart } from '@/app/hooks/use-cart';
-import { Button } from '@/app/components/ui/button';
-import { DeliveryMethod, Order } from '@/app/types';
-import { sendOrderToTelegram } from '@/app/lib/telegram';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/app/hooks/use-cart";
+import { Button } from "@/app/components/ui/button";
+import { DeliveryMethod, Order } from "@/app/types";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -13,16 +12,16 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    address: '',
-    deliveryMethod: 'delivery' as DeliveryMethod,
-    comment: '',
+    name: "",
+    phone: "",
+    address: "",
+    deliveryMethod: "delivery" as DeliveryMethod,
+    comment: "",
   });
 
   useEffect(() => {
     if (cart.items.length === 0) {
-      router.push('/cart');
+      router.push("/cart");
     } else {
       setIsLoading(false);
     }
@@ -30,16 +29,16 @@ export default function CheckoutPage() {
 
   const subtotal = cart.items.reduce(
     (total, item) => total + item.product.price * item.quantity,
-    0
+    0,
   );
   const deliveryPrice =
-    formData.deliveryMethod === 'delivery' && subtotal < 2000 ? 250 : 0;
+    formData.deliveryMethod === "delivery" && subtotal < 2000 ? 250 : 0;
   const total = subtotal + deliveryPrice;
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -52,22 +51,22 @@ export default function CheckoutPage() {
     e.preventDefault();
 
     if (cart.items.length === 0) {
-      alert('Ваша корзина пуста');
+      alert("Ваша корзина пуста");
       return;
     }
 
     if (!formData.name.trim()) {
-      alert('Пожалуйста, введите ваше имя');
+      alert("Пожалуйста, введите ваше имя");
       return;
     }
 
     if (!formData.phone.trim()) {
-      alert('Пожалуйста, введите ваш телефон');
+      alert("Пожалуйста, введите ваш телефон");
       return;
     }
 
-    if (formData.deliveryMethod === 'delivery' && !formData.address.trim()) {
-      alert('Пожалуйста, введите адрес доставки');
+    if (formData.deliveryMethod === "delivery" && !formData.address.trim()) {
+      alert("Пожалуйста, введите адрес доставки");
       return;
     }
 
@@ -84,21 +83,27 @@ export default function CheckoutPage() {
         comment: formData.comment,
       };
 
-      const success = await sendOrderToTelegram(order);
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(order),
+      });
 
-      if (success) {
+      const result = await response.json();
+
+      if (result.success) {
         cart.clearCart();
-        alert('Ваш заказ успешно отправлен!');
-        router.push('/');
+        alert("Ваш заказ успешно отправлен!");
+        router.push("/");
       } else {
         alert(
-          'Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.'
+          "Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.",
         );
       }
     } catch (error) {
-      console.error('Error submitting order:', error);
+      console.error("Error submitting order:", error);
       alert(
-        'Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.'
+        "Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз или свяжитесь с нами по телефону.",
       );
     } finally {
       setIsSubmitting(false);
@@ -164,7 +169,7 @@ export default function CheckoutPage() {
                       id="delivery"
                       name="deliveryMethod"
                       value="delivery"
-                      checked={formData.deliveryMethod === 'delivery'}
+                      checked={formData.deliveryMethod === "delivery"}
                       onChange={handleChange}
                       className="h-4 w-4 text-orange-600"
                     />
@@ -184,7 +189,7 @@ export default function CheckoutPage() {
                       id="pickup"
                       name="deliveryMethod"
                       value="pickup"
-                      checked={formData.deliveryMethod === 'pickup'}
+                      checked={formData.deliveryMethod === "pickup"}
                       onChange={handleChange}
                       className="h-4 w-4 text-orange-600"
                     />
@@ -196,7 +201,7 @@ export default function CheckoutPage() {
                     </label>
                   </div>
 
-                  {formData.deliveryMethod === 'delivery' && (
+                  {formData.deliveryMethod === "delivery" && (
                     <div className="mt-4">
                       <label className="block text-sm font-medium mb-1">
                         Адрес доставки *
@@ -206,7 +211,7 @@ export default function CheckoutPage() {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        required={formData.deliveryMethod === 'delivery'}
+                        required={formData.deliveryMethod === "delivery"}
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                         placeholder="Улица, дом, квартира, подъезд, этаж"
                       />
@@ -237,7 +242,7 @@ export default function CheckoutPage() {
                 size="lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Оформление...' : 'Оформить заказ'}
+                {isSubmitting ? "Оформление..." : "Оформить заказ"}
               </Button>
             </div>
           </form>
@@ -273,9 +278,9 @@ export default function CheckoutPage() {
               <div className="flex justify-between">
                 <span>Доставка</span>
                 <span>
-                  {formData.deliveryMethod === 'delivery' && subtotal < 2000
+                  {formData.deliveryMethod === "delivery" && subtotal < 2000
                     ? `${deliveryPrice} ₽`
-                    : 'Бесплатно'}
+                    : "Бесплатно"}
                 </span>
               </div>
             </div>
