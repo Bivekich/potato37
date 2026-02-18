@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { sendOrderToTelegram } from '@/app/lib/telegram';
-import { Order } from '@/app/types';
+import { NextRequest, NextResponse } from "next/server";
+import { sendOrderToTelegram } from "@/app/lib/telegram";
+import { sendOrderByEmail } from "@/app/lib/email";
+import { Order } from "@/app/types";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,40 +9,51 @@ export async function POST(req: NextRequest) {
 
     if (!order || !order.items || order.items.length === 0) {
       return NextResponse.json(
-        { success: false, error: 'Корзина пуста' },
-        { status: 400 }
+        { success: false, error: "Корзина пуста" },
+        { status: 400 },
       );
     }
 
     if (!order.name || !order.phone) {
       return NextResponse.json(
-        { success: false, error: 'Не указаны контактные данные' },
-        { status: 400 }
+        { success: false, error: "Не указаны контактные данные" },
+        { status: 400 },
       );
     }
 
-    if (order.deliveryMethod === 'delivery' && !order.address) {
+    if (order.deliveryMethod === "delivery" && !order.address) {
       return NextResponse.json(
-        { success: false, error: 'Не указан адрес доставки' },
-        { status: 400 }
+        { success: false, error: "Не указан адрес доставки" },
+        { status: 400 },
       );
     }
 
-    const success = await sendOrderToTelegram(order);
+    const [telegramSuccess, emailSuccess] = await Promise.all([
+      sendOrderToTelegram(order),
+      sendOrderByEmail(order),
+    ]);
 
-    if (!success) {
+    if (!telegramSuccess) {
+      console.error("Не удалось отправить заказ в Telegram");
+    }
+
+    if (!emailSuccess) {
+      console.error("Не удалось отправить заказ на email");
+    }
+
+    if (!telegramSuccess && !emailSuccess) {
       return NextResponse.json(
-        { success: false, error: 'Ошибка при отправке заказа в Telegram' },
-        { status: 500 }
+        { success: false, error: "Ошибка при отправке заказа" },
+        { status: 500 },
       );
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing order:', error);
+    console.error("Error processing order:", error);
     return NextResponse.json(
-      { success: false, error: 'Внутренняя ошибка сервера' },
-      { status: 500 }
+      { success: false, error: "Внутренняя ошибка сервера" },
+      { status: 500 },
     );
   }
 }
