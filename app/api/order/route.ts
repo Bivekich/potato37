@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!order.city) {
+      return NextResponse.json(
+        { success: false, error: "Не указан город" },
+        { status: 400 },
+      );
+    }
+
     if (order.deliveryMethod === "delivery" && !order.address) {
       return NextResponse.json(
         { success: false, error: "Не указан адрес доставки" },

@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    city: "",
     address: "",
     deliveryMethod: "delivery" as DeliveryMethod,
     comment: "",
@@ -65,6 +66,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!formData.city) {
+      alert("Пожалуйста, выберите город");
+      return;
+    }
+
     if (formData.deliveryMethod === "delivery" && !formData.address.trim()) {
       alert("Пожалуйста, введите адрес доставки");
       return;
@@ -78,6 +84,7 @@ export default function CheckoutPage() {
         total,
         name: formData.name,
         phone: formData.phone,
+        city: formData.city,
         address: formData.address,
         deliveryMethod: formData.deliveryMethod,
         comment: formData.comment,
@@ -158,6 +165,27 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Город</h2>
+                <select
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                >
+                  <option value="" disabled>
+                    Выберите город
+                  </option>
+                  <option value="Иваново">Иваново</option>
+                  <option value="Шуя">Шуя</option>
+                  <option value="Родники">Родники</option>
+                  <option value="Вичуга">Вичуга</option>
+                  <option value="Кинешма">Кинешма</option>
+                  <option value="Кохма">Кохма</option>
+                </select>
               </div>
 
               <div>

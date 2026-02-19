@@ -1,8 +1,8 @@
-import nodemailer from 'nodemailer';
-import { Order, CartItem } from '../types';
+import nodemailer from "nodemailer";
+import { Order, CartItem } from "../types";
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.beget.com',
+  host: "smtp.beget.com",
   port: 465,
   secure: true,
   auth: {
@@ -20,9 +20,9 @@ function formatCartItems(items: CartItem[]): string {
           <td style="padding:8px;border:1px solid #ddd;text-align:center;">${item.quantity} шт.</td>
           <td style="padding:8px;border:1px solid #ddd;text-align:right;">${item.product.price} &#8381;</td>
           <td style="padding:8px;border:1px solid #ddd;text-align:right;">${item.product.price * item.quantity} &#8381;</td>
-        </tr>`
+        </tr>`,
     )
-    .join('');
+    .join("");
 }
 
 export async function sendOrderByEmail(order: Order): Promise<boolean> {
@@ -32,12 +32,12 @@ export async function sendOrderByEmail(order: Order): Promise<boolean> {
     const recipientEmail = process.env.ORDER_EMAIL || smtpUser;
 
     if (!smtpUser || !smtpPass) {
-      console.error('SMTP credentials not configured');
+      console.error("SMTP credentials not configured");
       return false;
     }
 
     const deliveryPrice =
-      order.deliveryMethod === 'delivery' && order.total < 2000 ? 250 : 0;
+      order.deliveryMethod === "delivery" && order.total < 2000 ? 250 : 0;
     const totalWithDelivery = order.total + deliveryPrice;
 
     const html = `
@@ -47,9 +47,10 @@ export async function sendOrderByEmail(order: Order): Promise<boolean> {
         <h3>Данные клиента:</h3>
         <p><strong>Имя:</strong> ${order.name}</p>
         <p><strong>Телефон:</strong> ${order.phone}</p>
-        <p><strong>Способ получения:</strong> ${order.deliveryMethod === 'delivery' ? 'Доставка' : 'Самовывоз'}</p>
-        ${order.deliveryMethod === 'delivery' ? `<p><strong>Адрес:</strong> ${order.address || 'Не указан'}</p>` : ''}
-        ${order.comment ? `<p><strong>Комментарий:</strong> ${order.comment}</p>` : ''}
+        <p><strong>Город:</strong> ${order.city}</p>
+        <p><strong>Способ получения:</strong> ${order.deliveryMethod === "delivery" ? "Доставка" : "Самовывоз"}</p>
+        ${order.deliveryMethod === "delivery" ? `<p><strong>Адрес:</strong> ${order.address || "Не указан"}</p>` : ""}
+        ${order.comment ? `<p><strong>Комментарий:</strong> ${order.comment}</p>` : ""}
 
         <h3>Состав заказа:</h3>
         <table style="border-collapse:collapse;width:100%;">
@@ -68,7 +69,7 @@ export async function sendOrderByEmail(order: Order): Promise<boolean> {
 
         <div style="margin-top:16px;padding:12px;background:#f7f7f7;border-radius:8px;">
           <p style="margin:4px 0;"><strong>Сумма товаров:</strong> ${order.total} &#8381;</p>
-          <p style="margin:4px 0;"><strong>Доставка:</strong> ${deliveryPrice === 0 ? 'Бесплатно' : `${deliveryPrice} &#8381;`}</p>
+          <p style="margin:4px 0;"><strong>Доставка:</strong> ${deliveryPrice === 0 ? "Бесплатно" : `${deliveryPrice} &#8381;`}</p>
           <p style="margin:4px 0;font-size:18px;"><strong>Итого к оплате: ${totalWithDelivery} &#8381;</strong></p>
         </div>
       </div>
@@ -83,7 +84,7 @@ export async function sendOrderByEmail(order: Order): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error('Ошибка при отправке email:', error);
+    console.error("Ошибка при отправке email:", error);
     return false;
   }
 }

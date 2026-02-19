@@ -1,4 +1,4 @@
-import { PortableTextBlock } from '@portabletext/types';
+import { PortableTextBlock } from "@portabletext/types";
 
 export type Category = {
   _id: string;
@@ -28,13 +28,14 @@ export type CartItem = {
   quantity: number;
 };
 
-export type DeliveryMethod = 'delivery' | 'pickup';
+export type DeliveryMethod = "delivery" | "pickup";
 
 export type Order = {
   items: CartItem[];
   total: number;
   name: string;
   phone: string;
+  city: string;
   address?: string;
   deliveryMethod: DeliveryMethod;
   comment?: string;
